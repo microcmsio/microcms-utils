@@ -1,1 +1,4 @@
-export { getFormattedTimeRange, getStartAndEndOfTime } from "./date-range";
+export {
+  getFormattedFilterTimeRange,
+  getStartAndEndOfTime,
+} from "./date-range";

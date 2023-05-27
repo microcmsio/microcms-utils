@@ -1,3 +1,10 @@
+/**
+ * Get the start and end ISO strings of a month or day with timezone offset.
+ *
+ * @param yearMonthDay {string} - The date string in "YYYY-MM" or "YYYY-MM-DD" format. ex. 2020-01 or 2020-01-01
+ * @param timezoneOffset {number} - The timezone offset in hours. ex. 9 for JST
+ * @returns {[string, string]} - An array containing the start and end ISO strings. ex. ["2022-12-31T23:59:59.999Z", "2020-02-01T00:00:00.000Z"]
+ */
 export function getStartAndEndOfTime(
   yearMonthDay: string,
   timezoneOffset: number
@@ -32,7 +39,16 @@ export function getStartAndEndOfTime(
   return [startOfMonthOrDay.toISOString(), endOfMonthOrDay.toISOString()];
 }
 
-export function getFormattedTimeRange(
+/**
+ * Get a formatted filter time range string for a specific field and date.
+ *
+ * @param fieldName {string} - The name of the field to filter.
+ * @param yearMonthDay {string} - The date string in "YYYY-MM-DD" or "YYYY-MM" format.
+ * @param timezoneOffset {number} - The timezone offset in minutes.
+ *
+ * @returns {string} - A formatted filter time range string.
+ */
+export function getFormattedFilterTimeRange(
   fieldName: string,
   yearMonthDay: string,
   timezoneOffset: number
