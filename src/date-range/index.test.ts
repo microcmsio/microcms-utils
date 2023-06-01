@@ -1,5 +1,33 @@
 import { describe, test, expect } from "vitest";
-import { getFormattedFilterTimeRange, getStartAndEndOfTime } from "./index";
+import {
+  getAbsoluteTime,
+  getFormattedFilterTimeRange,
+  getStartAndEndOfTime,
+} from "./index";
+
+describe("getAbsoluteTime", () => {
+  test("should return correct Date object for given ISO date string and timezone offset", () => {
+    const isoDateString = "2022-12-31T23:59:59Z"; // ISO date string for Dec 31, 2022 23:59:59 UTC
+    const timezoneOffset = 5; // Timezone offset for Eastern Standard Time (EST)
+
+    const result = getAbsoluteTime(isoDateString, timezoneOffset);
+
+    // Convert result to ISO string and compare with expected ISO string
+    // Expected time is Dec 31, 2022 19:59:59 EST (which is the same as Jan 1, 2023 00:59:59 UTC)
+    expect(result.toISOString()).toBe("2022-12-31T19:59:59.000Z");
+  });
+
+  test("should default to JST (UTC+9) if no timezone offset is provided", () => {
+    const isoDateString = "2022-12-31T15:00:00Z"; // ISO date string for Dec 31, 2022 15:00:00 UTC
+
+    const result = getAbsoluteTime(isoDateString);
+
+    // Convert result to ISO string and compare with expected ISO string
+    // Expected time is Dec 31, 2022 15:00:00 JST (which is the same as Dec 31, 2022 06:00:00 UTC)
+    console.log(result);
+    expect(result.toISOString()).toBe("2022-12-31T15:00:00.000Z");
+  });
+});
 
 describe("getStartAndEndOfTime", () => {
   // Test case: Invalid year, month, or day should throw an error

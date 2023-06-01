@@ -1,13 +1,64 @@
 /**
+ * Takes an ISO 8601 date string and an offset in hours, and returns the absolute time (UNIX time).
+ *
+ * @param {string} isoDateString - The date string in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ).
+ * @param {number} [timezoneOffset=9] - The offset from UTC in hours. The default is 9 (JST).
+ * @returns {Date} - A JavaScript Date object based on the given ISO 8601 date and offset hours.
+ */
+export function getAbsoluteTime(
+  isoDateString: string,
+  timezoneOffset: number = 9
+): Date {
+  // Convert ISO date string to Unix timestamp
+  const unixtime = isoToUnixTime(isoDateString);
+
+  // Calculate absolute time
+  // Add timezone offset and specified offset hours to Unix timestamp
+  return new Date(
+    unixtime +
+      (new Date().getTimezoneOffset() + timezoneOffset * 60) * 60 * 1000
+  );
+}
+
+/**
+ * Converts an ISO 8601 date string to UNIX time.
+ *
+ * This function creates a JavaScript Date object from the provided ISO 8601 date string. It then returns the
+ * corresponding UNIX time (the number of milliseconds since the UNIX epoch, January 1, 1970 00:00:00 UTC),
+ * rounded down to the nearest whole number.
+ *
+ * @param {string} isoDateString - The date string in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ).
+ * @returns {number} - The UNIX time corresponding to the provided ISO 8601 date string.
+ */
+export function isoToUnixTime(isoDateString: string): number {
+  const date = new Date(isoDateString);
+  return Math.floor(date.getTime());
+}
+
+/**
+ * Converts a UNIX timestamp to an ISO 8601 date string.
+ *
+ * This function creates a JavaScript Date object from the provided UNIX timestamp (the number of milliseconds since the
+ * UNIX epoch, January 1, 1970 00:00:00 UTC). It then returns the corresponding ISO 8601 date string.
+ *
+ * @param {number} unixTimestamp - The UNIX timestamp to convert.
+ * @returns {string} - The ISO 8601 date string corresponding to the provided UNIX timestamp.
+ */
+export function unixTimeToIso(unixTimestamp: number): string {
+  const date = new Date(unixTimestamp);
+  return date.toISOString();
+}
+
+/**
  * Get the start and end ISO strings of a month or day with timezone offset.
  *
  * @param yearMonthDay {string} - The date string in "YYYY-MM" or "YYYY-MM-DD" format. ex. 2020-01 or 2020-01-01
- * @param timezoneOffset {number} - The timezone offset in hours. ex. 9 for JST
+ * @param timezoneOffset {number} - [timezoneOffset=9] The timezone offset in hours. ex. 9 for JST
  * @returns {[string, string]} - An array containing the start and end ISO strings. ex. ["2022-12-31T23:59:59.999Z", "2020-02-01T00:00:00.000Z"]
  */
 export function getStartAndEndOfTime(
   yearMonthDay: string,
-  timezoneOffset: number
+  timezoneOffset: number = 9
 ): [string, string] {
   // Split the input into year, month, and day
   const [year, month, day] = yearMonthDay.split("-").map(Number);
@@ -44,14 +95,14 @@ export function getStartAndEndOfTime(
  *
  * @param fieldName {string} - The name of the field to filter.
  * @param yearMonthDay {string} - The date string in "YYYY-MM-DD" or "YYYY-MM" format.
- * @param timezoneOffset {number} - The timezone offset in minutes.
+ * @param timezoneOffset {number} [timezoneOffset=9] - The timezone offset in minutes.
  *
  * @returns {string} - A formatted filter time range string.
  */
 export function getFormattedFilterTimeRange(
   fieldName: string,
   yearMonthDay: string,
-  timezoneOffset: number
+  timezoneOffset: number = 9
 ): string {
   // Get the start and end of the month / day with timezone adjustment
   const [start, end] = getStartAndEndOfTime(yearMonthDay, timezoneOffset);
