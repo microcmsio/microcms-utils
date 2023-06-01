@@ -1,6 +1,6 @@
 {
   "name": "microcms-utils",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "microCMS useful utilities",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -15,7 +15,7 @@
   "keywords": [
     "microCMS"
   ],
-  "author": "himorishige",
+  "author": "microCMS",
   "license": "MIT",
   "files": [
     "dist"
