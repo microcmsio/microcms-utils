@@ -1,6 +1,6 @@
 export {
   getAbsoluteDate,
-  getTimeZoneDateTime,
+  getLocaleDateTime,
   isoToUnixTime,
   unixTimeToIso,
   getFormattedFilterTimeRange,

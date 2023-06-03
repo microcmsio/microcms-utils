@@ -29,7 +29,7 @@ export function getAbsoluteDate(
  *
  * @returns {string} The date string formatted according to the locale and time zone.
  */
-export function getTimeZoneDateTime(
+export function getLocaleDateTime(
   date: string,
   timeZone: string = "Asia/Tokyo",
   locale: string = "ja-JP"

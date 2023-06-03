@@ -3,7 +3,7 @@ import {
   getAbsoluteDate,
   getFormattedFilterTimeRange,
   getStartAndEndOfTime,
-  getTimeZoneDateTime,
+  getLocaleDateTime,
 } from "./index";
 
 describe("getAbsoluteTime", () => {
@@ -30,7 +30,7 @@ describe("getAbsoluteTime", () => {
   });
 });
 
-describe("getTimeZoneDateTime", () => {
+describe("getLocaleDateTime", () => {
   test("should return a formatted date string for the given time zone and locale", () => {
     const date = "2023-01-01T00:00:00.000Z"; // UTC
     const timeZone = "Asia/Tokyo"; // UTC+9
@@ -38,7 +38,7 @@ describe("getTimeZoneDateTime", () => {
 
     // Because the output string can vary depending on the environment (OS, browser, etc.),
     // we'll just check that the output is a non-empty string.
-    const result = getTimeZoneDateTime(date, timeZone, locale);
+    const result = getLocaleDateTime(date, timeZone, locale);
     expect(typeof result).toBe("string");
     expect(result).not.toBe("");
   });
@@ -46,7 +46,7 @@ describe("getTimeZoneDateTime", () => {
   test('should use "Asia/Tokyo" as the default time zone and "ja-JP" as the default locale', () => {
     const date = "2023-01-01T00:00:00.000Z"; // UTC
 
-    const result = getTimeZoneDateTime(date);
+    const result = getLocaleDateTime(date);
     expect(typeof result).toBe("string");
     expect(result).not.toBe("");
   });
