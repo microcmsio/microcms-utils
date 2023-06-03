@@ -5,7 +5,7 @@
  * @param {number} [timezoneOffset=9] - The offset from UTC in hours. The default is 9 (JST).
  * @returns {Date} - A JavaScript Date object based on the given ISO 8601 date and offset hours.
  */
-export function getAbsoluteTime(
+export function getAbsoluteDate(
   isoDateString: string,
   timezoneOffset: number = 9
 ): Date {
@@ -18,6 +18,30 @@ export function getAbsoluteTime(
     unixtime +
       (new Date().getTimezoneOffset() + timezoneOffset * 60) * 60 * 1000
   );
+}
+
+/**
+ * Converts a date string to a localized string representation in the specified time zone.
+ *
+ * @param {string} date - The date string to convert. This should be in a format recognized by the Date.parse() method.
+ * @param {string} [timeZone="Asia/Tokyo"] - The time zone to use for the conversion. Defaults to 'Asia/Tokyo'.
+ * @param {string} [locale="ja-JP"] - The locale to use for the conversion. Defaults to 'ja-JP'.
+ *
+ * @returns {string} The date string formatted according to the locale and time zone.
+ */
+export function getTimeZoneDateTime(
+  date: string,
+  timeZone: string = "Asia/Tokyo",
+  locale: string = "ja-JP"
+): string {
+  // Create a new Date object from the input date string
+  let dateObj = new Date(date);
+
+  // Convert the Date object to a string using the specified locale and time zone
+  // and return the result
+  return dateObj.toLocaleString(locale, {
+    timeZone,
+  });
 }
 
 /**

@@ -1,8 +1,9 @@
 import { describe, test, expect } from "vitest";
 import {
-  getAbsoluteTime,
+  getAbsoluteDate,
   getFormattedFilterTimeRange,
   getStartAndEndOfTime,
+  getTimeZoneDateTime,
 } from "./index";
 
 describe("getAbsoluteTime", () => {
@@ -10,7 +11,7 @@ describe("getAbsoluteTime", () => {
     const isoDateString = "2022-12-31T23:59:59Z"; // ISO date string for Dec 31, 2022 23:59:59 UTC
     const timezoneOffset = 5; // Timezone offset for Eastern Standard Time (EST)
 
-    const result = getAbsoluteTime(isoDateString, timezoneOffset);
+    const result = getAbsoluteDate(isoDateString, timezoneOffset);
 
     // Convert result to ISO string and compare with expected ISO string
     // Expected time is Dec 31, 2022 19:59:59 EST (which is the same as Jan 1, 2023 00:59:59 UTC)
@@ -20,12 +21,34 @@ describe("getAbsoluteTime", () => {
   test("should default to JST (UTC+9) if no timezone offset is provided", () => {
     const isoDateString = "2022-12-31T15:00:00Z"; // ISO date string for Dec 31, 2022 15:00:00 UTC
 
-    const result = getAbsoluteTime(isoDateString);
+    const result = getAbsoluteDate(isoDateString);
 
     // Convert result to ISO string and compare with expected ISO string
     // Expected time is Dec 31, 2022 15:00:00 JST (which is the same as Dec 31, 2022 06:00:00 UTC)
     console.log(result);
     expect(result.toISOString()).toBe("2022-12-31T15:00:00.000Z");
+  });
+});
+
+describe("getTimeZoneDateTime", () => {
+  test("should return a formatted date string for the given time zone and locale", () => {
+    const date = "2023-01-01T00:00:00.000Z"; // UTC
+    const timeZone = "Asia/Tokyo"; // UTC+9
+    const locale = "ja-JP";
+
+    // Because the output string can vary depending on the environment (OS, browser, etc.),
+    // we'll just check that the output is a non-empty string.
+    const result = getTimeZoneDateTime(date, timeZone, locale);
+    expect(typeof result).toBe("string");
+    expect(result).not.toBe("");
+  });
+
+  test('should use "Asia/Tokyo" as the default time zone and "ja-JP" as the default locale', () => {
+    const date = "2023-01-01T00:00:00.000Z"; // UTC
+
+    const result = getTimeZoneDateTime(date);
+    expect(typeof result).toBe("string");
+    expect(result).not.toBe("");
   });
 });
 
