@@ -32,7 +32,8 @@ export function getAbsoluteDate(
 export function getLocaleDateTime(
   date: string,
   timeZone: string = "Asia/Tokyo",
-  locale: string = "ja-JP"
+  locale: string = "ja-JP",
+  options?: Intl.DateTimeFormatOptions
 ): string {
   // Create a new Date object from the input date string
   let dateObj = new Date(date);
@@ -40,6 +41,7 @@ export function getLocaleDateTime(
   // Convert the Date object to a string using the specified locale and time zone
   // and return the result
   return dateObj.toLocaleString(locale, {
+    ...options,
     timeZone,
   });
 }
