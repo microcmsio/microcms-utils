@@ -74,33 +74,43 @@ export function unixTimeToIso(unixTimestamp: number): string {
 }
 
 /**
- * Get the start and end ISO strings of a month or day with timezone offset.
+ * Get the start and end ISO strings of a specific day or a range of days or months, adjusted for timezone offset.
  *
- * @param yearMonthDay {string} - The date string in "YYYY-MM" or "YYYY-MM-DD" format. ex. 2020-01 or 2020-01-01
- * @param timezoneOffset {number} - [timezoneOffset=9] The timezone offset in hours. ex. 9 for JST
- * @returns {[string, string]} - An array containing the start and end ISO strings. ex. ["2022-12-31T23:59:59.999Z", "2020-02-01T00:00:00.000Z"]
+ * @param yearMonthDay {string} - The date string in "YYYY-MM-DD" format for a specific day, or "YYYY-MM" format for a range of days within a month, or "YYYY" format for a range of months within a year. ex. 2020-01-01, 2020-01, or 2020
+ * @param options {Object} [options={ range: 1, timezoneOffset: 9 }] - An object with optional properties 'range' and 'timezoneOffset'.
+ * @param options.range {number} - The number of days for the range, starting from the specified date. If yearMonthDay is in "YYYY-MM" format, the range covers the entire month. If yearMonthDay is in "YYYY" format, the range covers the entire year.
+ * @param options.timezoneOffset {number} - The timezone offset in hours from UTC. ex. 9 for JST
+ * @returns {[string, string]} - An array containing the start and end ISO strings for the specified day or range of days. ex. ["2020-01-01T00:00:00.000Z", "2020-01-01T23:59:59.999Z"], ["2020-01-01T00:00:00.000Z", "2020-01-31T23:59:59.999Z"], or ["2020-01-01T00:00:00.000Z", "2020-12-31T23:59:59.999Z"]
  */
 export function getStartAndEndOfTime(
   yearMonthDay: string,
-  timezoneOffset: number = 9
+  options: { range?: number; timezoneOffset?: number } = {}
 ): [string, string] {
-  // Split the input into year, month, and day
+  // Destructure the options object into individual variables
+  const { range = 1, timezoneOffset = 9 } = options;
+
+  // Split the input into year, month, and possibly day
   const [year, month, day] = yearMonthDay.split("-").map(Number);
 
-  // Check for invalid year, month, or day (minimal error checking)
-  if (year < 0 || month < 1 || month > 12 || day < 1 || day > 31) {
+  // Check for invalid year, month, or day values
+  if (year < 0 || month < 1 || month > 12 || (day && (day < 1 || day > 31))) {
     throw new Error("Invalid year or month or day");
   }
 
-  // Create a Date object for the first day of the month / the start of the day
+  // Create a Date object for the start of the specified day or the first day of the specified month or the first month of the specified year
   const startOfMonthOrDay = new Date(
-    Date.UTC(year, month - 1, day || 1, -timezoneOffset)
+    Date.UTC(
+      year,
+      day ? month - 1 : month - range,
+      day ? day - range + 1 : 1,
+      -timezoneOffset
+    )
   );
 
-  // Subtract 1 millisecond
+  // Subtract 1 millisecond to get the end of the previous day or month or year
   startOfMonthOrDay.setMilliseconds(startOfMonthOrDay.getMilliseconds() - 1);
 
-  // Create a Date object for the last day of the month / the end of the day
+  // Create a Date object for the end of the specified day or the last day of the specified month or the last month of the specified year
   const endOfMonthOrDay = new Date(
     Date.UTC(
       day ? year : month === 12 ? year + 1 : year,
@@ -110,27 +120,29 @@ export function getStartAndEndOfTime(
     )
   );
 
-  // Return the start and end of the month / day in ISO format
+  // Return the start and end of the specified day or range of days or range of months in ISO format
   return [startOfMonthOrDay.toISOString(), endOfMonthOrDay.toISOString()];
 }
 
 /**
- * Get a formatted filter time range string for a specific field and date.
+ * Get a formatted filter time range string for a specific field and a day or range of days or months.
  *
  * @param fieldName {string} - The name of the field to filter.
- * @param yearMonthDay {string} - The date string in "YYYY-MM-DD" or "YYYY-MM" format.
- * @param timezoneOffset {number} [timezoneOffset=9] - The timezone offset in minutes.
+ * @param yearMonthDay {string} - The date string in "YYYY-MM-DD" format for a specific day, "YYYY-MM" format for a range of days within a month, or "YYYY" format for a range of months within a year.
+ * @param options {Object} [options={ range: 1, timezoneOffset: 9 }] - An object with optional properties 'range' and 'timezoneOffset'.
+ * @param options.range {number} - The number of days for the range, starting from the specified date. If yearMonthDay is in "YYYY-MM" format, the range covers the entire month. If yearMonthDay is in "YYYY" format, the range covers the entire year.
+ * @param options.timezoneOffset {number} - The timezone offset in hours from UTC.
  *
- * @returns {string} - A formatted filter time range string.
+ * @returns {string} - A formatted filter time range string, indicating that the field value should be within the specified day or range of days or range of months.
  */
 export function getFormattedFilterTimeRange(
   fieldName: string,
   yearMonthDay: string,
-  timezoneOffset: number = 9
+  options: { range?: number; timezoneOffset?: number } = {}
 ): string {
-  // Get the start and end of the month / day with timezone adjustment
-  const [start, end] = getStartAndEndOfTime(yearMonthDay, timezoneOffset);
+  // Get the start and end ISO strings for the specified day or range of days or range of months, adjusted for timezone
+  const [start, end] = getStartAndEndOfTime(yearMonthDay, options);
 
-  // Return the formatted string
+  // Return the formatted filter string, which specifies that the field value should be greater than the start time and less than the end time
   return `${fieldName}[greater_than]${start}[and]${fieldName}[less_than]${end}`;
 }

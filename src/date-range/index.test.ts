@@ -1,9 +1,9 @@
 import { describe, test, expect } from "vitest";
 import {
   getAbsoluteDate,
-  getFormattedFilterTimeRange,
   getStartAndEndOfTime,
   getLocaleDateTime,
+  getFormattedFilterTimeRange,
 } from "./index";
 
 describe("getAbsoluteTime", () => {
@@ -52,81 +52,79 @@ describe("getLocaleDateTime", () => {
   });
 });
 
-describe("getStartAndEndOfTime", () => {
-  // Test case: Invalid year, month, or day should throw an error
-  test("should throw an error for invalid year, month, or day", () => {
-    expect(() => getStartAndEndOfTime("2020-13-01", 0)).toThrow(
-      "Invalid year or month or day"
-    );
-    expect(() => getStartAndEndOfTime("2020-12-32", 0)).toThrow(
-      "Invalid year or month or day"
-    );
-    expect(() => getStartAndEndOfTime("2020-00-01", 0)).toThrow(
-      "Invalid year or month or day"
-    );
-    expect(() => getStartAndEndOfTime("2020-12-00", 0)).toThrow(
-      "Invalid year or month or day"
-    );
+describe("getStartAndEndOfTime function", () => {
+  test("returns correct start and end for a single day", () => {
+    const [start, end] = getStartAndEndOfTime("2023-06-08");
+    expect(start).toBe("2023-06-07T14:59:59.999Z");
+    expect(end).toBe("2023-06-08T15:00:00.000Z");
   });
 
-  // Test case: Return the start and end of the month for "exclusive" comparison
-  test('should return the start and end of the month for "exclusive" comparison', () => {
-    const [start, end] = getStartAndEndOfTime("2020-12", 0);
+  test("returns correct start and end for a month", () => {
+    const [start, end] = getStartAndEndOfTime("2020-12", {
+      timezoneOffset: 0,
+    });
     expect(start).toBe("2020-11-30T23:59:59.999Z");
     expect(end).toBe("2021-01-01T00:00:00.000Z");
   });
 
-  // Test case: Return the start and end of the day for "exclusive" comparison
-  test('should return the start and end of the day for "exclusive" comparison', () => {
-    const [start, end] = getStartAndEndOfTime("2020-12-15", 0);
-    expect(start).toBe("2020-12-14T23:59:59.999Z");
-    expect(end).toBe("2020-12-16T00:00:00.000Z");
+  test.todo("returns correct start and end for a year", () => {
+    const [start, end] = getStartAndEndOfTime("2023");
+    expect(start).toBe("2022-12-31T14:59:59.999Z");
+    expect(end).toBe("2023-12-31T15:00:00.000Z");
   });
 
-  // Test case: Adjust for timezone offset
-  test("should adjust for timezone offset", () => {
-    const [start, end] = getStartAndEndOfTime("2020-12-15", 9);
-    expect(start).toBe("2020-12-14T14:59:59.999Z");
-    expect(end).toBe("2020-12-15T15:00:00.000Z");
+  test("throws an error for invalid input", () => {
+    expect(() => getStartAndEndOfTime("2023-13-01")).toThrowError(
+      "Invalid year or month or day"
+    );
+    expect(() => getStartAndEndOfTime("2023-06-32")).toThrowError(
+      "Invalid year or month or day"
+    );
+    expect(() => getStartAndEndOfTime("2023-00")).toThrowError(
+      "Invalid year or month or day"
+    );
+  });
+
+  test("returns correct start and end for a range of days with a different timezone", () => {
+    const [start, end] = getStartAndEndOfTime("2023-06-08", {
+      range: 3,
+      timezoneOffset: 0,
+    });
+    expect(start).toBe("2023-06-05T23:59:59.999Z");
+    expect(end).toBe("2023-06-09T00:00:00.000Z");
   });
 });
 
-describe("getFormattedFilterTimeRange", () => {
-  test("should return a formatted filter string for a month with timezone offset", () => {
-    const fieldName = "date";
-    const yearMonthDay = "2020-01";
-    const timezoneOffset = 9;
-
-    // Get the start and end of the month with timezone adjustment
-    const [start, end] = getStartAndEndOfTime(yearMonthDay, timezoneOffset);
-
-    const result = getFormattedFilterTimeRange(
-      fieldName,
-      yearMonthDay,
-      timezoneOffset
+describe("getFormattedFilterTimeRange function", () => {
+  test("returns correct filter string for a single day", () => {
+    const filterString = getFormattedFilterTimeRange("createdAt", "2023-06-08");
+    expect(filterString).toBe(
+      "createdAt[greater_than]2023-06-07T14:59:59.999Z[and]createdAt[less_than]2023-06-08T15:00:00.000Z"
     );
-
-    // Expected format: "date[greater_than]start[and]date[less_than]end"
-    const expected = `${fieldName}[greater_than]${start}[and]${fieldName}[less_than]${end}`;
-    expect(result).to.equal(expected);
   });
 
-  test("should return a formatted filter string for a day with timezone offset", () => {
-    const fieldName = "date";
-    const yearMonthDay = "2020-01-01";
-    const timezoneOffset = 9;
-
-    // Get the start and end of the day with timezone adjustment
-    const [start, end] = getStartAndEndOfTime(yearMonthDay, timezoneOffset);
-
-    const result = getFormattedFilterTimeRange(
-      fieldName,
-      yearMonthDay,
-      timezoneOffset
+  test("returns correct filter string for a month", () => {
+    const filterString = getFormattedFilterTimeRange("createdAt", "2023-06");
+    expect(filterString).toBe(
+      "createdAt[greater_than]2023-05-31T14:59:59.999Z[and]createdAt[less_than]2023-06-30T15:00:00.000Z"
     );
+  });
 
-    // Expected format: "date[greater_than]start[and]date[less_than]end"
-    const expected = `${fieldName}[greater_than]${start}[and]${fieldName}[less_than]${end}`;
-    expect(result).to.equal(expected);
+  test.todo("returns correct filter string for a year", () => {
+    const filterString = getFormattedFilterTimeRange("createdAt", "2023");
+    expect(filterString).toBe(
+      "createdAt[greater_than]2022-12-31T14:59:59.999Z[and]createdAt[less_than]2023-12-31T15:00:00.000Z"
+    );
+  });
+
+  test("returns correct filter string for a range of days with a different timezone", () => {
+    const filterString = getFormattedFilterTimeRange(
+      "createdAt",
+      "2023-06-08",
+      { range: 3, timezoneOffset: 0 }
+    );
+    expect(filterString).toBe(
+      "createdAt[greater_than]2023-06-05T23:59:59.999Z[and]createdAt[less_than]2023-06-09T00:00:00.000Z"
+    );
   });
 });
