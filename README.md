@@ -1,6 +1,10 @@
 # microCMS Utilities
 
-## date utility
+## Date utility
+
+`microCMS API` returns the date and time in UTC as the timezone.  
+If you want to retrieve a date or time in Japan time, you have to convert it to UTC each time.  
+`microcms-utils` date utility provides functions to make working with the API easier.
 
 ### getAbsoluteTime
 
@@ -20,17 +24,27 @@ const absoluteDateTime = getAbsoluteTime(new Date().toISOString(), 9).toLocaleSt
 
 ### getStartAndEndOfTime
 
-You can get a range of dates and months independent of the time zone of the execution environment.
+You can get a range of dates, months and years independent of the time zone of the execution environment.
 
 #### day
 
 ```ts
 import { getStartAndEndOfTime } from 'microcms-utils';
 
-const [start, end] = getStartAndEndOfTime('2023-05-01', 9);
+const [start, end] = getStartAndEndOfTime('2023-05-01');
 
 // start: 2023-04-30T14:59:59.999Z
 // end: 2023-05-01T15:00:00.000Z
+```
+
+```ts
+// range option
+const [start, end] = getStartAndEndOfTime('2023-06-01', {
+  range: 3, // 3 days
+}),
+
+// start: 2023-05-29T14:59:59.999Z
+// end: 2023-06-01T15:00:00.000Z
 ```
 
 #### month
@@ -38,10 +52,41 @@ const [start, end] = getStartAndEndOfTime('2023-05-01', 9);
 ```ts
 import { getStartAndEndOfTime } from 'microcms-utils';
 
-const [start, end] = getStartAndEndOfTime('2023-05', 9);
+const [start, end] = getStartAndEndOfTime('2023-05');
 
 // start: 2023-04-30T14:59:59.999Z
 // end: 2023-05-31T15:00:00.000Z
+```
+
+```ts
+// range option
+const [start, end] = getStartAndEndOfTime('2023-06', {
+  range: 3, // 3 months
+}),
+
+// start: 2023-03-31T14:59:59.999Z
+// end: 2023-06-30T15:00:00.000Z
+```
+
+#### year
+
+```ts
+import { getStartAndEndOfTime } from 'microcms-utils';
+
+const [start, end] = getStartAndEndOfTime('2023');
+
+// start: 2022-12-31T14:59:59.999Z
+// end: 2023-12-31T15:00:00.000Z
+```
+
+```ts
+// range option
+const [start, end] = getStartAndEndOfTime('2023', {
+  range: 3, // 3 years
+}),
+
+// start: 2020-12-31T14:59:59.999Z
+// end: 2023-12-31T15:00:00.000Z
 ```
 
 ### getFormattedFilterTimeRange
@@ -51,7 +96,13 @@ You may get a query for filters string.
 ```ts
 import { getFormattedFilterTimeRange } from 'microcms-utils';
 
-const queryString = getFormattedFilterTimeRange('fieldName', '2023-05', 9);
+const queryString = getFormattedFilterTimeRange('fieldName', '2023-05');
 
 // fieldName[greater_than]2023-04-30T14:59:59.999Z[and]fieldName[less_than]2023-05-31T15:00:00.000Z
+
+const rangedQueryString = getFormattedFilterTimeRange('fieldName', '2023-06', {
+  range: 2, // 2 months
+});
+
+// fieldName[greater_than]2023-04-30T14:59:59.999Z[and]fieldName[less_than]2023-06-30T15:00:00.000Z
 ```
