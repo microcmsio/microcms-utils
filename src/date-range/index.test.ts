@@ -38,7 +38,13 @@ describe("getLocaleDateTime", () => {
 
     // Because the output string can vary depending on the environment (OS, browser, etc.),
     // we'll just check that the output is a non-empty string.
-    const result = getLocaleDateTime(date, timeZone, locale);
+    const result = getLocaleDateTime(
+      date,
+      {
+        timeZone,
+      },
+      locale
+    );
     expect(typeof result).toBe("string");
     expect(result).not.toBe("");
   });

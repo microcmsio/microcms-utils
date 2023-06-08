@@ -21,25 +21,29 @@ export function getAbsoluteDate(
 }
 
 /**
- * Converts a date string to a localized string representation in the specified time zone.
+ * Converts a date string to a localized string representation using the specified locale and options.
  *
- * @param {string} date - The date string to convert. This should be in a format recognized by the Date.parse() method.
- * @param {string} [timeZone="Asia/Tokyo"] - The time zone to use for the conversion. Defaults to 'Asia/Tokyo'.
+ * @param {string} date - The date string to convert. It should be in a format recognized by the Date.parse() method.
+ * @param {Intl.DateTimeFormatOptions} [options] - An object that includes formatting options (e.g., timeZone, hourCycle, etc.). If a time zone is not specified, it defaults to 'Asia/Tokyo'.
  * @param {string} [locale="ja-JP"] - The locale to use for the conversion. Defaults to 'ja-JP'.
  *
- * @returns {string} The date string formatted according to the locale and time zone.
+ * @returns {string} The date string formatted according to the locale and the provided options.
  */
 export function getLocaleDateTime(
   date: string,
-  timeZone: string = "Asia/Tokyo",
-  locale: string = "ja-JP",
-  options?: Intl.DateTimeFormatOptions
+  options?: Intl.DateTimeFormatOptions,
+  locale: string = "ja-JP"
 ): string {
+  // If a time zone is not provided in the options, default to 'Asia/Tokyo'
+  const { timeZone } = options || {
+    timeZone: "Asia/Tokyo",
+  };
+
   // Create a new Date object from the input date string
   let dateObj = new Date(date);
 
-  // Convert the Date object to a string using the specified locale and time zone
-  // and return the result
+  // Convert the Date object to a string using the specified locale and options
+  // Return the localized date and time string
   return dateObj.toLocaleString(locale, {
     ...options,
     timeZone,
