@@ -100,8 +100,8 @@ export function getStartAndEndOfTime(
   // Create a Date object for the start of the specified day or the first day of the specified month or the first month of the specified year
   const startOfMonthOrDay = new Date(
     Date.UTC(
-      year,
-      day ? month - 1 : month - range,
+      !month ? year - range + 1 : year,
+      day ? month - 1 : month - range || 0,
       day ? day - range + 1 : 1,
       -timezoneOffset
     )
@@ -114,7 +114,7 @@ export function getStartAndEndOfTime(
   const endOfMonthOrDay = new Date(
     Date.UTC(
       day ? year : month === 12 ? year + 1 : year,
-      day ? month - 1 : month % 12,
+      !month ? 12 : day ? month - 1 : month % 12,
       day ? day + 1 : 1,
       -timezoneOffset
     )

@@ -67,7 +67,7 @@ describe("getStartAndEndOfTime function", () => {
     expect(end).toBe("2021-01-01T00:00:00.000Z");
   });
 
-  test.todo("returns correct start and end for a year", () => {
+  test("returns correct start and end for a year", () => {
     const [start, end] = getStartAndEndOfTime("2023");
     expect(start).toBe("2022-12-31T14:59:59.999Z");
     expect(end).toBe("2023-12-31T15:00:00.000Z");
@@ -93,6 +93,15 @@ describe("getStartAndEndOfTime function", () => {
     expect(start).toBe("2023-06-05T23:59:59.999Z");
     expect(end).toBe("2023-06-09T00:00:00.000Z");
   });
+
+  test("returns correct start and end for a range of years with a different timezone", () => {
+    const [start, end] = getStartAndEndOfTime("2023", {
+      range: 3,
+      timezoneOffset: 0,
+    });
+    expect(start).toBe("2020-12-31T23:59:59.999Z");
+    expect(end).toBe("2024-01-01T00:00:00.000Z");
+  });
 });
 
 describe("getFormattedFilterTimeRange function", () => {
@@ -110,7 +119,7 @@ describe("getFormattedFilterTimeRange function", () => {
     );
   });
 
-  test.todo("returns correct filter string for a year", () => {
+  test("returns correct filter string for a year", () => {
     const filterString = getFormattedFilterTimeRange("createdAt", "2023");
     expect(filterString).toBe(
       "createdAt[greater_than]2022-12-31T14:59:59.999Z[and]createdAt[less_than]2023-12-31T15:00:00.000Z"
