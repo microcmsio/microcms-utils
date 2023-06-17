@@ -17,14 +17,14 @@ import { getAbsoluteTime } from 'microcms-utils'
 const dateTime = new Date().toISOString().toLocaleString();
 // 2023-06-01T01:14:53.838Z
 
-// Local time in the specified time difference is displayed.
+// Local time in the specified time difference is displayed. ex. display JST on UTC or the other timezone Runtime
 const absoluteDateTime = getAbsoluteTime(new Date().toISOString(), 9).toLocaleString();
 // 2023/6/1 10:14:53
 ```
 
 ### getStartAndEndOfTime
 
-You can get a range of dates, months and years independent of the time zone of the execution environment.
+You can get the start and end ISO strings of a specific day or a range of days or months, adjusted for timezone offset.
 
 #### day
 
@@ -91,18 +91,18 @@ const [start, end] = getStartAndEndOfTime('2023', {
 
 ### getFormattedFilterTimeRange
 
-You may get a query for filters string.
+You can get a formatted filter time range string for a specific field and a day or range of days or months.
 
 ```ts
 import { getFormattedFilterTimeRange } from 'microcms-utils';
 
-const queryString = getFormattedFilterTimeRange('fieldName', '2023-05');
+const queryString = getFormattedFilterTimeRange('created_at', '2023-05');
 
-// fieldName[greater_than]2023-04-30T14:59:59.999Z[and]fieldName[less_than]2023-05-31T15:00:00.000Z
+// created_at[greater_than]2023-04-30T14:59:59.999Z[and]created_at[less_than]2023-05-31T15:00:00.000Z
 
-const rangedQueryString = getFormattedFilterTimeRange('fieldName', '2023-06', {
+const rangedQueryString = getFormattedFilterTimeRange('created_at', '2023-06', {
   range: 2, // 2 months
 });
 
-// fieldName[greater_than]2023-04-30T14:59:59.999Z[and]fieldName[less_than]2023-06-30T15:00:00.000Z
+// created_at[greater_than]2023-04-30T14:59:59.999Z[and]created_at[less_than]2023-06-30T15:00:00.000Z
 ```
