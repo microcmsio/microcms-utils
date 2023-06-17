@@ -9,6 +9,7 @@
   "scripts": {
     "build": "rollup -c",
     "test": "vitest",
+    "test:timezone": "TZ=utc vitest",
     "clean": "rimraf dist",
     "publish": "npm run build && npm publish"
   },
