@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This is deprecated and will not be maintained.
+
 # microCMS Utilities
 
 This package is a collection of utility functions useful for development with microCMS.
